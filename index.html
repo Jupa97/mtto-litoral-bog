@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#9f1023"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<title>MTTO LITORAL BOG</title>
+<style>
+:root{--red:#9f1023;--red2:#7d0d1b;--gold:#e8bd4b;--ink:#20242a;--muted:#68717d;--bg:#f4f5f7;--line:#e2e5e9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:white;border-bottom:1px solid var(--line);padding:12px 16px;position:sticky;top:0;z-index:5}
+.brand{display:flex;align-items:center;gap:12px;max-width:850px;margin:auto}.brand img{width:110px;height:60px;object-fit:contain}.brand strong{display:block;color:var(--red);letter-spacing:.04em}.brand small{color:var(--muted)}
+main{max-width:850px;margin:20px auto;padding:0 14px 50px}.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px #1b27320a}
+h1{font-size:24px;margin:4px 0 8px}h2{font-size:18px;margin:0 0 14px}.muted{color:var(--muted);font-size:13px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-weight:650;font-size:13px;margin:12px 0 6px}input,select,textarea{width:100%;padding:12px;border:1px solid #cfd5dc;border-radius:10px;font:inherit;background:white;color:var(--ink)}textarea{min-height:95px;resize:vertical}
+button{border:0;border-radius:10px;padding:12px 16px;background:var(--red);color:white;font-weight:700;font:inherit;cursor:pointer}button.secondary{background:#eef0f3;color:var(--ink)}button.danger{background:#a51d2d}button:disabled{opacity:.45}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}.hidden{display:none!important}.stat{background:#fff8e4;border:1px solid #f1dfaa;border-radius:12px;padding:12px}.stat b{font-size:24px;color:var(--red)}
+.photo{border:1px dashed #b8c0c9;border-radius:12px;padding:10px}.photo img{width:100%;max-height:190px;object-fit:contain;border-radius:8px;margin-top:8px}
+#signature{width:100%;height:160px;border:1px solid #cfd5dc;border-radius:10px;touch-action:none;background:white}
+.item{padding:12px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.tag{display:inline-block;background:#f7e9ec;color:var(--red);padding:3px 8px;border-radius:20px;font-size:12px;font-weight:700}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}
+@media(max-width:580px){.grid{grid-template-columns:1fr}.brand img{width:90px}.panel{padding:15px}}
+@media print{header,.no-print,footer{display:none!important}body{background:white}.panel{box-shadow:none;border:0;padding:0}main{margin:0;max-width:none}.print-only{display:block!important}}
+</style></head>
+<body>
+<header><div class="brand"><img src="logo-litoral.jpeg" alt="Panificadora del Litoral S.A."><div><strong>MTTO LITORAL BOG</strong><small>Área de mantenimiento · Actas de entrega</small></div></div></header>
+<main>
+<section id="home">
+ <div class="panel"><h1>Panel de mantenimiento</h1><p class="muted">Registro local de actas de entrega de equipos y servicios.</p>
+ <div class="grid"><div class="stat"><span class="muted">Actas guardadas en este dispositivo</span><br><b id="count">0</b></div><div class="stat"><span class="muted">Áreas configuradas</span><br><b>9</b></div></div>
+ <div class="actions"><button onclick="newActa()">＋ Nueva acta</button><button class="secondary" onclick="showHistory()">Ver historial</button></div></div>
+ <div class="panel"><h2>Áreas de trabajo</h2><div id="areasSummary" class="grid"></div></div>
+ <div class="panel"><h2>Usuarios previstos</h2><div class="item"><b>Administrador</b><br><span class="muted">Jupa1997@gmail.com</span></div><div class="item"><b>Técnico 1</b><br><span class="muted">Spinnin313@gmail.com</span></div><div class="item"><b>Técnico 2</b><br><span class="muted">Pendiente de asignar</span></div><p class="muted">Los correos se muestran como referencia. El inicio de sesión seguro aún debe conectarse al servicio de autenticación al publicar la aplicación.</p></div>
+</section>
+<section id="form" class="hidden">
+ <div class="panel"><h1>Nueva acta</h1><p class="muted">Completa los datos de la intervención. Los campos marcados con * son obligatorios.</p>
+ <form id="actaForm">
+ <div class="grid"><div><label>Área *</label><select id="area" required></select></div><div><label>Equipo *</label><select id="equipment" required></select><input id="freeEquipment" class="hidden" placeholder="Escribe el equipo o elemento"></div></div>
+ <div class="grid"><div><label>Tipo de intervención *</label><select id="type" required><option value="">Seleccionar</option><option>Correctivo</option><option>Preventivo</option><option>Otro</option></select></div><div><label>Técnico responsable *</label><select id="technician" required><option value="">Seleccionar</option><option>Spinnin313@gmail.com</option><option>Administrador</option><option>Segundo técnico (pendiente)</option></select></div></div>
+ <label>Descripción del trabajo realizado *</label><textarea id="work" required placeholder="Describe la falla, diagnóstico y actividades realizadas..."></textarea>
+ <label>Repuestos y materiales utilizados</label><textarea id="materials" placeholder="Indica repuestos, cantidades o escribe Ninguno"></textarea>
+ <div class="grid"><div><label>Estado de entrega *</label><select id="status" required><option value="">Seleccionar</option><option>Operativo</option><option>Operativo con observaciones</option><option>Fuera de servicio</option></select></div><div><label>Fecha y hora</label><input id="date" readonly></div></div>
+ <label>Observaciones</label><textarea id="observations" placeholder="Recomendaciones o pendientes..."></textarea>
+ <div class="grid"><div class="photo"><label>Fotografía ANTES *</label><input id="before" type="file" accept="image/*" capture="environment" required><img id="beforePreview" class="hidden"></div><div class="photo"><label>Fotografía DESPUÉS *</label><input id="after" type="file" accept="image/*" capture="environment" required><img id="afterPreview" class="hidden"></div></div>
+ <label>Firma digital del técnico *</label><canvas id="signature"></canvas><div class="actions"><button type="button" class="secondary" onclick="clearSignature()">Limpiar firma</button></div>
+ <div class="actions"><button type="submit">Guardar acta</button><button type="button" class="secondary" onclick="goHome()">Cancelar</button></div>
+ </form></div>
+</section>
+<section id="history" class="hidden"><div class="panel"><h1>Historial de actas</h1><div class="actions no-print"><button class="secondary" onclick="goHome()">Volver</button></div><div id="historyList"></div></div></section>
+<section id="detail" class="hidden"><div class="panel" id="detailContent"></div><div class="actions no-print"><button onclick="window.print()">Imprimir / Guardar PDF</button><button class="secondary" onclick="showHistory()">Volver al historial</button></div></section>
+<footer>MTTO LITORAL BOG · Prototipo inicial · Datos guardados únicamente en este dispositivo</footer>
+</main>
+<script>
+const catalog={
+"Producción":["Cilindro #1","Mojadora molde","Mojadora #1","Mojadora #2","Elevador","Divisora volumétrica","Trompo","Cuarto de fermentación","Cuarto de crecimiento","Enrolladora","Multi molde","Multi panecillo","Multi mogolla","Escarchadora","Shiller","Cuenta litros","Nevera"],
+"Agranel":["Mojadora","Cilindro #2","Nevera","Divisor de masa","Cuenta litros"],
+"Repostería":["Batidora #1","Batidora #2","Batidora #3","Batidora #4","Nevera #1","Nevera #2","Horno microondas","Abre latas","Licuadora","Cuchillo eléctrico","Estufa"],
+"Batido":["Batidora #1","Batidora #2","Nevera","Báscula #1","Báscula #2"],
+"Hojaldre":["Nevera","Mojadora","Laminadora","Estufa","Molino"],
+"Hornos":["Horno #1","Horno #2","Horno #3","Horno #4","Horno #5","Horno #6","Horno #7","Horno #8","Horno #9","Horno #10","Astro","Polin #1","Polin #2"],
+"Empaque":["Tajadora #1","Tajadora #2","Tajadora #3","Fechadora #1","Fechadora #2"],
+"Locativo":null,"General":null};
+const areas=Object.keys(catalog); const $=id=>document.getElementById(id);
+let signatureData="", current=null;
+function saved(){try{return JSON.parse(localStorage.getItem("mtto_actas")||"[]")}catch(e){return []}}
+function persist(a){localStorage.setItem("mtto_actas",JSON.stringify(a));$("count").textContent=a.length}
+function init(){
+ $("area").innerHTML='<option value="">Seleccionar área</option>'+areas.map(a=>`<option>${a}</option>`).join("");
+ $("areasSummary").innerHTML=areas.map(a=>`<div class="item"><b>${a}</b><br><span class="muted">${catalog[a]?catalog[a].length+" equipos":"Registro libre"}</span></div>`).join("");
+ $("count").textContent=saved().length;
+ $("area").addEventListener("change",updateEquipment);
+ ["before","after"].forEach(id=>$(id).addEventListener("change",e=>preview(e.target,id+"Preview")));
+ $("status").addEventListener("change",()=>{if($("status").value==="Operativo")$("observations").required=false;else $("observations").required=true});
+ $("actaForm").addEventListener("submit",saveActa);
+ $("date").value=new Date().toLocaleString("es-CO");
+}
+function preview(input,imgid){const f=input.files[0];if(!f)return;const url=URL.createObjectURL(f);$(imgid).src=url;$(imgid).classList.remove("hidden")}
+function updateEquipment(){const a=$("area").value, list=catalog[a];$("equipment").classList.toggle("hidden",!list);$("freeEquipment").classList.toggle("hidden",!!list);$("equipment").required=!!list;$("freeEquipment").required=!list;$("equipment").innerHTML=list?'<option value="">Seleccionar equipo</option>'+list.map(x=>`<option>${x}</option>`).join(""):""}
+function newActa(){ $("actaForm").reset();$("date").value=new Date().toLocaleString("es-CO");["beforePreview","afterPreview"].forEach(id=>$(id).classList.add("hidden"));signatureData="";clearSignature();$("home").classList.add("hidden");$("history").classList.add("hidden");$("detail").classList.add("hidden");$("form").classList.remove("hidden");updateEquipment()}
+function goHome(){["form","history","detail"].forEach(id=>$(id).classList.add("hidden"));$("home").classList.remove("hidden");$("count").textContent=saved().length}
+function clearSignature(){const c=$("signature"),ctx=c.getContext("2d");ctx.clearRect(0,0,c.width,c.height);signatureData=""}
+const canvas=$("signature"),ctx=canvas.getContext("2d");let drawing=false;
+function resizeCanvas(){const r=canvas.getBoundingClientRect(),d=window.devicePixelRatio||1;canvas.width=r.width*d;canvas.height=160*d;ctx.scale(d,d);ctx.lineWidth=2.3;ctx.lineCap="round";ctx.strokeStyle="#171717"}setTimeout(resizeCanvas,50);window.addEventListener("resize",()=>{if(!$("form").classList.contains("hidden"))resizeCanvas()});
+function point(e){const r=canvas.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+canvas.addEventListener("pointerdown",e=>{drawing=true;canvas.setPointerCapture(e.pointerId);let p=point(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});
+canvas.addEventListener("pointermove",e=>{if(!drawing)return;let p=point(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
+["pointerup","pointercancel","pointerleave"].forEach(ev=>canvas.addEventListener(ev,()=>{drawing=false;signatureData=canvas.toDataURL("image/png")}));
+function fileData(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+async function saveActa(e){e.preventDefault();if(!signatureData){alert("Debes registrar la firma del técnico.");return}
+const area=$("area").value, equipment=catalog[area]?$("equipment").value:$("freeEquipment").value.trim();if(!equipment){alert("Selecciona o escribe el equipo.");return}
+const all=saved(), n=all.length+1, now=new Date(), code=`MTTO-${now.getFullYear()}-${String(n).padStart(5,"0")}`;
+const a={code,date:$("date").value,area,equipment,type:$("type").value,technician:$("technician").value,work:$("work").value,materials:$("materials").value,status:$("status").value,observations:$("observations").value,before:await fileData($("before").files[0]),after:await fileData($("after").files[0]),signature:signatureData};
+all.unshift(a);try{persist(all);showDetail(a)}catch(err){alert("No se pudo guardar. Las fotos pueden superar el espacio disponible del navegador. Intenta con imágenes más pequeñas.");}}
+function showHistory(){["home","form","detail"].forEach(id=>$(id).classList.add("hidden"));$("history").classList.remove("hidden");const all=saved();$("historyList").innerHTML=all.length?all.map(a=>`<div class="item"><span class="tag">${a.status}</span><p><b>${a.code}</b> · ${a.area} · ${a.equipment}</p><p class="muted">${a.date} · ${a.technician}</p><button class="secondary" onclick="openCode('${a.code}')">Ver acta</button></div>`).join(""):"<p class='muted'>Todavía no hay actas guardadas en este dispositivo.</p>"}
+function openCode(code){const a=saved().find(x=>x.code===code);if(a)showDetail(a)}
+function showDetail(a){current=a;["home","form","history"].forEach(id=>$(id).classList.add("hidden"));$("detail").classList.remove("hidden");$("detailContent").innerHTML=`<div style="display:flex;align-items:center;gap:14px;border-bottom:2px solid #9f1023;padding-bottom:12px"><img src="logo-litoral.jpeg" style="width:130px;object-fit:contain"><div><b style="color:#9f1023">PANIFICADORA DEL LITORAL S.A.</b><br><b>ÁREA DE MANTENIMIENTO</b><br>ACTA DE ENTREGA DE EQUIPO O SERVICIO</div></div><p><b>${a.code}</b> <span style="float:right">${a.date}</span></p><p><b>Área:</b> ${esc(a.area)} &nbsp; <b>Equipo:</b> ${esc(a.equipment)}</p><p><b>Intervención:</b> ${esc(a.type)} &nbsp; <b>Técnico:</b> ${esc(a.technician)}</p><h3>Trabajo realizado</h3><p>${esc(a.work)}</p><h3>Repuestos y materiales</h3><p>${esc(a.materials||"No especificados")}</p><h3>Estado de entrega</h3><p><b>${esc(a.status)}</b></p><h3>Observaciones</h3><p>${esc(a.observations||"Sin observaciones")}</p><div class="grid"><div><b>ANTES</b><img src="${a.before}" style="width:100%;max-height:230px;object-fit:contain"></div><div><b>DESPUÉS</b><img src="${a.after}" style="width:100%;max-height:230px;object-fit:contain"></div></div><div style="margin-top:25px"><b>Firma del técnico</b><br><img src="${a.signature}" style="width:240px;height:90px;object-fit:contain;border-bottom:1px solid #333"><p>${esc(a.technician)}</p></div><p style="font-size:11px;color:#666;border-top:1px solid #ddd;padding-top:8px">Documento generado por MTTO LITORAL BOG.</p>`}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+init();
+if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}));
+</script></body></html>
