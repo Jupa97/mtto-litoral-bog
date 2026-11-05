@@ -60,7 +60,7 @@ footer{text-align:center;color:var(--muted);font-size:12px;padding:15px}.notice{
   </form></div>
  </section>
  <section id="history" class="hidden"><div class="panel"><h1>Historial de actas</h1><div class="actions no-print"><button class="secondary" onclick="goHome()">Volver</button><button class="secondary" onclick="showHistory()">Actualizar</button></div><div id="historyList"></div></div></section>
- <section id="detail" class="hidden"><div class="panel" id="detailContent"></div><div class="actions no-print"><button onclick="window.print()">Imprimir / Guardar PDF</button><button class="secondary" onclick="showHistory()">Volver al historial</button></div></section>
+ <section id="detail" class="hidden"><div class="panel" id="detailContent"></div><div class="actions no-print"><button onclick="window.print()">Imprimir / Guardar PDF</button><button class="danger" onclick="deleteCurrentActa()">Eliminar acta definitivamente</button><button class="secondary" onclick="showHistory()">Volver al historial</button></div></section>
 </section>
 <footer>MTTO LITORAL BOG · Registros compartidos en Supabase · Acceso restringido a usuarios autorizados</footer>
 </main>
@@ -166,6 +166,27 @@ async function showDetail(a){
   const [before,after]=await Promise.all([signedPhoto(a.before_path),signedPhoto(a.after_path)]);
   $("detailContent").innerHTML=`<div style="display:flex;align-items:center;gap:14px;border-bottom:2px solid #9f1023;padding-bottom:12px"><img src="logo-litoral.jpeg" style="width:130px;object-fit:contain"><div><b style="color:#9f1023">PANIFICADORA DEL LITORAL S.A.</b><br><b>ÁREA DE MANTENIMIENTO</b><br>ACTA DE ENTREGA DE EQUIPO O SERVICIO</div></div><p><b>${esc(a.code)}</b> <span style="float:right">${esc(a.date)}</span></p><p><b>Área:</b> ${esc(a.area)} &nbsp; <b>Equipo:</b> ${esc(a.equipment)}</p><p><b>Intervención:</b> ${esc(a.type)} &nbsp; <b>Técnico:</b> ${esc(a.technician)}</p><h3>Trabajo realizado</h3><p>${esc(a.work)}</p><h3>Repuestos y materiales</h3><p>${esc(a.materials||"No especificados")}</p><h3>Estado de entrega</h3><p><b>${esc(a.status)}</b></p><h3>Observaciones</h3><p>${esc(a.observations||"Sin observaciones")}</p><div class="grid"><div><b>ANTES</b><img src="${before}" style="width:100%;max-height:230px;object-fit:contain"></div><div><b>DESPUÉS</b><img src="${after}" style="width:100%;max-height:230px;object-fit:contain"></div></div><div style="margin-top:25px"><b>Firma del técnico</b><br><img src="${a.signature}" style="width:240px;height:90px;object-fit:contain;border-bottom:1px solid #333"><p>${esc(a.technician)}</p></div><p style="font-size:11px;color:#666;border-top:1px solid #ddd;padding-top:8px">Documento generado por MTTO LITORAL BOG.</p>`;
  }catch(err){$("detailContent").innerHTML="<p>No se pudieron cargar las fotografías: "+esc(err.message)+"</p>"}
+}
+async function deleteCurrentActa(){
+ if(!current?.id){alert("No hay un acta seleccionada.");return}
+ const code=current.code||"esta acta";
+ if(!confirm(`¿Estás seguro de que deseas eliminar definitivamente el acta ${code}?\n\nSe eliminará el registro y sus fotografías. Esta acción no se puede deshacer.`))return;
+ const btn=document.querySelector("#detail .danger");
+ if(btn){btn.disabled=true;btn.textContent="Eliminando..."}
+ try{
+  const {error}=await db.from("actas").delete().eq("id",current.id);
+  if(error)throw error;
+  const paths=[current.before_path,current.after_path].filter(Boolean);
+  if(paths.length){
+   const {error:storageError}=await db.storage.from(BUCKET).remove(paths);
+   if(storageError)alert("El acta se eliminó, pero no se pudieron borrar todas sus fotografías: "+storageError.message);
+  }
+  current=null;await loadCount();await showHistory();
+  alert("Acta eliminada definitivamente.");
+ }catch(err){
+  alert("No se pudo eliminar el acta: "+err.message+"\n\nRevisa que hayas ejecutado el SQL de permisos para eliminar.");
+  if(btn){btn.disabled=false;btn.textContent="Eliminar acta definitivamente"}
+ }
 }
 function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 init();checkSession();
