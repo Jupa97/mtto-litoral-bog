@@ -1,17 +1,7 @@
-MTTO LITORAL BOG - PROTOTIPO PWA
+MTTO LITORAL BOG - versión con Supabase
 
-Contenido:
-- index.html: aplicación
-- manifest.webmanifest y sw.js: instalación y caché PWA
-- logo-litoral.jpeg: logo aportado
-- icon-192.png / icon-512.png: iconos de aplicación
-
-PRUEBA LOCAL:
-Abre index.html en un navegador moderno. Para instalarla como PWA necesita publicarse en un hosting HTTPS.
-
-IMPORTANTE:
-Esta versión es un prototipo funcional local. Las actas y fotos se guardan en el almacenamiento del navegador/dispositivo. No sincroniza entre celulares, no tiene autenticación segura con Gmail y no es todavía un repositorio central empresarial. Los correos incluidos son referencias visuales, no cuentas autenticadas.
-Para producción se debe conectar autenticación real, base de datos, almacenamiento de fotos, control de roles y respaldos. No usar información confidencial hasta completar esa integración.
-
-PDF:
-Abre un acta guardada y usa "Imprimir / Guardar PDF" para imprimir o guardar como PDF desde el navegador.
+1. Ejecuta CONFIGURACION_SUPABASE.sql en Supabase > SQL Editor > New query > Run.
+2. La app usa inicio de sesión por correo y contraseña. No tiene registro público.
+3. Crea los usuarios autorizados en Supabase > Authentication > Users > Add user.
+4. No compartas contraseñas ni claves secretas.
+5. Las fotografías están en un bucket privado y requieren sesión iniciada.
